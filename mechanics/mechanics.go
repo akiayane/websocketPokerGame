@@ -1,7 +1,6 @@
 package mechanics
 
 import (
-	"fmt"
 	"sort"
 	"strings"
 )
@@ -72,13 +71,11 @@ func AnalyzeHand(hand []string) (string, int) {
 		cards = append(cards, card{byte(fIndex + 2), s[1]})
 
 	}
-	fmt.Println(cards)
 
 	groups := make(map[byte][]card)
 	for _, c := range cards {
 		groups[c.face] = append(groups[c.face], c)
 	}
-	fmt.Println(groups)
 
 	switch len(groups) {
 	case 2:

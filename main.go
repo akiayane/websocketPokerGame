@@ -36,6 +36,16 @@ func main() {
 	hand := []string{"2h", "2d", "2c", "kc", "qd"}
 	fmt.Println(mechanics.AnalyzeHand(hand))
 
+	player1 := mechanics.Player{
+		Id: 1,
+	}
+	player2 := mechanics.Player{
+		Id: 2,
+	}
+	players := []mechanics.Player{player1, player2}
+	Game := mechanics.New(players)
+	fmt.Println(Game)
+
 	//routes()
 	//log.Fatal(http.ListenAndServe(":8080", nil))
 }
