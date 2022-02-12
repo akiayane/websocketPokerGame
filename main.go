@@ -33,43 +33,6 @@ func main() {
 	// 	"ah ah 7c 6c 4c",
 	// }
 
-	hand := []string{"2h", "2d", "2c", "kc", "qd"}
-	fmt.Println(mechanics.AnalyzeHand(hand))
-
-	player1 := mechanics.Player{
-		Id: 1,
-	}
-	player2 := mechanics.Player{
-		Id: 2,
-	}
-	players := []mechanics.Player{player1, player2}
-	Game := mechanics.New(players)
-	fmt.Println(Game)
-
-	currentWinner := mechanics.Winner{
-		HighestCardValue: -1,
-		Rank:             0,
-		Analyze:          "invalid",
-	}
-	for i, _ := range Game.Players {
-		analyze, currentHighestCard, currentRank := mechanics.AnalyzeHand(append(Game.Players[i].Cards, Game.Commons...))
-		fmt.Println(analyze, currentHighestCard, currentRank)
-		if currentRank > currentWinner.Rank {
-			currentWinner.Rank = currentRank
-			currentWinner.HighestCardValue = currentHighestCard
-			currentWinner.Analyze = analyze
-			currentWinner.Player = Game.Players[i]
-		} else if currentRank == currentWinner.Rank {
-			if currentHighestCard > currentWinner.HighestCardValue {
-				currentWinner.Rank = currentRank
-				currentWinner.HighestCardValue = currentHighestCard
-				currentWinner.Analyze = analyze
-				currentWinner.Player = Game.Players[i]
-			}
-		}
-	}
-
-	fmt.Println(currentWinner)
 	routes()
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
@@ -85,7 +48,7 @@ func homepage(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "hello")
 }
 
-func socket(w http.ResponseWriter, r *http.Request) {
+func chatSocket(w http.ResponseWriter, r *http.Request) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
@@ -93,6 +56,20 @@ func socket(w http.ResponseWriter, r *http.Request) {
 	clients[ws] = true
 	log.Println("Client connected...")
 	go reader(ws)
+}
+
+func gameSocket(w http.ResponseWriter, r *http.Request) {
+	player1 := mechanics.Player{
+		Id: 1,
+	}
+	player2 := mechanics.Player{
+		Id: 2,
+	}
+	players := []mechanics.Player{player1, player2}
+	Game := mechanics.New(players)
+	fmt.Println(Game)
+
+	fmt.Println(mechanics.GetWinner(Game))
 }
 
 func reader(conn *websocket.Conn) {
@@ -121,5 +98,6 @@ func reader(conn *websocket.Conn) {
 
 func routes() {
 	http.HandleFunc("/", homepage)
-	http.HandleFunc("/ws", socket)
+	http.HandleFunc("/chat", chatSocket)
+	http.HandleFunc("/game", gameSocket)
 }
