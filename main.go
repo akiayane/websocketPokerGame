@@ -46,8 +46,32 @@ func main() {
 	Game := mechanics.New(players)
 	fmt.Println(Game)
 
-	//routes()
-	//log.Fatal(http.ListenAndServe(":8080", nil))
+	currentWinner := mechanics.Winner{
+		HighestCardValue: -1,
+		Rank:             0,
+		Analyze:          "invalid",
+	}
+	for i, _ := range Game.Players {
+		analyze, currentHighestCard, currentRank := mechanics.AnalyzeHand(append(Game.Players[i].Cards, Game.Commons...))
+		fmt.Println(analyze, currentHighestCard, currentRank)
+		if currentRank > currentWinner.Rank {
+			currentWinner.Rank = currentRank
+			currentWinner.HighestCardValue = currentHighestCard
+			currentWinner.Analyze = analyze
+			currentWinner.Player = Game.Players[i]
+		} else if currentRank == currentWinner.Rank {
+			if currentHighestCard > currentWinner.HighestCardValue {
+				currentWinner.Rank = currentRank
+				currentWinner.HighestCardValue = currentHighestCard
+				currentWinner.Analyze = analyze
+				currentWinner.Player = Game.Players[i]
+			}
+		}
+	}
+
+	fmt.Println(currentWinner)
+	routes()
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
 func reverseByte(input []byte) []byte {

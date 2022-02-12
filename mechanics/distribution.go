@@ -40,9 +40,11 @@ func distributeCards(game *Game) {
 			//append card to commons list
 			game.Commons = append(game.Commons, getAllCards()[index])
 
+			//mark this card's index as already handed out
+			checkmap[index] = true
+
 			//increase counter so that our loop can be finished
 			counter++
-			checkmap[index] = true
 		}
 
 	}
@@ -64,9 +66,11 @@ func distributeCards(game *Game) {
 				//append card to players card list
 				game.Players[i].Cards = append(game.Players[i].Cards, getAllCards()[index])
 
+				//mark this card's index as already handed out
+				checkmap[index] = true
+
 				//increase counter so that our loop can be finished
 				counter++
-				checkmap[index] = true
 			}
 
 		}

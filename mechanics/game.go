@@ -10,6 +10,13 @@ type Game struct {
 	Commons []string
 }
 
+type Winner struct {
+	Player           Player
+	Analyze          string
+	HighestCardValue int
+	Rank             int
+}
+
 func New(players []Player) Game {
 	game := Game{
 		Players: players,

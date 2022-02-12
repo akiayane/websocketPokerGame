@@ -38,7 +38,9 @@ func isFlush(cards []card) bool {
 	return true
 }
 
-func AnalyzeHand(hand []string) (string, int) {
+//this function analyze player's hand and return the name of combination, the highest card in the hand and the rank of combo
+//rank of combo is an integer that represents the significance of combo
+func AnalyzeHand(hand []string) (string, int, int) {
 	highestCardValue := 0
 	splitSet := make(map[string]bool)
 	var split []string
@@ -49,21 +51,21 @@ func AnalyzeHand(hand []string) (string, int) {
 		}
 	}
 	if len(split) != 5 {
-		return "invalid", highestCardValue
+		return "invalid", highestCardValue, 0
 	}
 	var cards []card
 
 	for _, s := range split {
 		if len(s) != 2 {
-			return "invalid", highestCardValue
+			return "invalid", highestCardValue, 0
 		}
 		fIndex := strings.IndexByte(faces, s[0])
 		if fIndex == -1 {
-			return "invalid", highestCardValue
+			return "invalid", highestCardValue, 0
 		}
 		sIndex := strings.IndexByte(suits, s[1])
 		if sIndex == -1 {
-			return "invalid", highestCardValue
+			return "invalid", highestCardValue, 0
 		}
 		if fIndex+2 > highestCardValue {
 			highestCardValue = fIndex + 2
@@ -81,31 +83,31 @@ func AnalyzeHand(hand []string) (string, int) {
 	case 2:
 		for _, group := range groups {
 			if len(group) == 4 {
-				return "four-of-a-kind", highestCardValue
+				return "four-of-a-kind", highestCardValue, 8
 			}
 		}
-		return "full-house", highestCardValue
+		return "full-house", highestCardValue, 7
 	case 3:
 		for _, group := range groups {
 			if len(group) == 3 {
-				return "three-of-a-kind", highestCardValue
+				return "three-of-a-kind", highestCardValue, 4
 			}
 		}
-		return "two-pair", highestCardValue
+		return "two-pair", highestCardValue, 3
 	case 4:
-		return "one-pair", highestCardValue
+		return "one-pair", highestCardValue, 2
 	default:
 		flush := isFlush(cards)
 		straight := isStraight(cards)
 		switch {
 		case flush && straight:
-			return "straight-flush", highestCardValue
+			return "straight-flush", highestCardValue, 9
 		case flush:
-			return "flush", highestCardValue
+			return "flush", highestCardValue, 6
 		case straight:
-			return "straight", highestCardValue
+			return "straight", highestCardValue, 5
 		default:
-			return "high-card", highestCardValue
+			return "high-card", highestCardValue, 1
 		}
 	}
 }
